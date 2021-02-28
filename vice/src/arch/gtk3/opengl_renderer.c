@@ -236,9 +236,9 @@ static void on_widget_resized(GtkWidget *widget, GtkAllocation *allocation, gpoi
         context->native_view_bg_g = 0.0f;
         context->native_view_bg_b = 0.0f;
     } else {
-        context->native_view_bg_r = 0.5f;
-        context->native_view_bg_g = 0.5f;
-        context->native_view_bg_b = 0.5f;
+        context->native_view_bg_r = 0.0f;
+        context->native_view_bg_g = 0.0f;
+        context->native_view_bg_b = 0.0f;
     }
 
     /* Update the size of the native child window to match the gtk drawing area */
