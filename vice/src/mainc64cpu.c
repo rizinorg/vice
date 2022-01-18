@@ -53,6 +53,9 @@
 #include "traps.h"
 #include "types.h"
 
+// TODO: conditional
+#include "trace.h"
+
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 1
 #endif
@@ -640,6 +643,9 @@ void maincpu_resync_limits(void)
 
 void maincpu_mainloop(void)
 {
+	// TODO: conditional
+	trace_open();
+
     /* Notice that using a struct for these would make it a lot slower (at
        least, on gcc 2.7.2.x).  */
     uint8_t reg_a = 0;

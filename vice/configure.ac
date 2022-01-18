@@ -118,7 +118,8 @@ dnl
 
 VICE_ARG_WITH_LIST(zlib,                [  --without-zlib          do not use the zlib support])
 VICE_ARG_ENABLE_LIST(arch,              [  --enable-arch[[=arch]]  enable architecture specific compilation [[default=yes]]], [], [enable_arch=yes])
-VICE_ARG_ENABLE_LIST(cpuhistory,        [  --enable-cpuhistory     enable the 65xx cpu history feature])
+VICE_ARG_ENABLE_LIST(cpuhistory,        [  --enable-cpuhistory     enable the 65xx cpu history feature [[default=yes]]])
+VICE_ARG_ENABLE_LIST(bap_frames,        [  --enable-bap-frames     enable the bap-frames trace generation feature])
 VICE_ARG_ENABLE_LIST(ethernet,          [  --enable-ethernet       enables The Final Ethernet emulation])
 VICE_ARG_ENABLE_LIST(ipv6,              [  --disable-ipv6          disables the checking for IPv6 compatibility])
 VICE_ARG_ENABLE_LIST(libieee1284,       [  --enable-libieee1284    enables libieee1284 support])
@@ -434,6 +435,7 @@ BSD_JOYSTICK_SUPPORT="no "
 DEBUG_SUPPORT="no "
 DEBUG_THREADS_SUPPORT="no "
 FEATURE_CPUMEMHISTORY_SUPPORT="no "
+FEATURE_BAP_FRAMES_SUPPORT="yes "
 HAS_HIDMGR_SUPPORT="no "
 HAS_USB_JOYSTICK_SUPPORT="no "
 HAVE_AUDIO_UNIT_SUPPORT="no "
@@ -503,6 +505,19 @@ AS_IF([test x"$enable_cpuhistory" = "xyes"],
   [
     AC_DEFINE(FEATURE_CPUMEMHISTORY,,[Use the 65xx cpu history feature.])
     FEATURE_CPUMEMHISTORY_SUPPORT="yes"
+  ])
+
+AM_CONDITIONAL([ENABLE_BAP_FRAMES], false)
+AS_IF([test x"$enable_bap_frames" = "xyes"],
+  [
+   AC_DEFINE(FEATURE_BAP_FRAMES,,[Generate bap-frames (.frames) traces.])
+   FEATURE_BAP_FRAMES_SUPPORT="yes"
+   # find protobuf out here because bap-frames' configure doesn't set up the include dir
+   PKG_CHECK_MODULES(PROTOBUF, [protobuf], [], AC_MSG_ERROR([failed to find protobuf]))
+   AX_SUBDIRS_CONFIGURE([src/lib/bap-frames/libtrace], [CXXFLAGS=${PROTOBUF_CFLAGS} -std=c++11, LDFLAGS=${PROTOBUF_LIBS}])
+   AS_IF([test "$FEATURE_CPUMEMHISTORY_SUPPORT" = "yes"],
+     [AC_MSG_ERROR([--enable-cpuhistory and --enable-bap-frames are mutually exclusive])])
+   AM_CONDITIONAL([ENABLE_BAP_FRAMES], true)
   ])
 
 dnl New 8580 filters: Changed on 2020-08-23 from default 'no' to default 'yes'.
@@ -1816,7 +1831,7 @@ else
     LINKCC='$(CXX)'
 
     dnl Set CXXFLAGS. Use -fno-exceptions for G++ if supported.
-    if test "$ac_test_CXXFLAGS" != set; then
+    if test "$ac_test_CXXFLAGS" != set -a x"$enable_bap_frames" != "xyes"; then
       if test "$GXX" = yes; then
         old_CXXFLAGS=$CXXFLAGS
         CXXFLAGS="$CXXFLAGS -fno-exceptions"
@@ -3959,6 +3974,7 @@ echo "MISC"
 echo "----"
 
 echo "65xx CPU history support   : $FEATURE_CPUMEMHISTORY_SUPPORT (--enable/disable-cpuhistory)"
+echo "Generate bap-frames traces : $FEATURE_BAP_FRAMES_SUPPORT (--enable/disable-bap-frames)"
 echo "Debug support              : $DEBUG_SUPPORT (--enable/disable-debug)"
 echo "Threading debug support    : $DEBUG_THREADS_SUPPORT (--enable/disable-debug-threads"
 echo "Build old x64 emulator     : $X64_INCLUDED (--enable/--disable-x64)"

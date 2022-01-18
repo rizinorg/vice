@@ -617,6 +617,9 @@ vsid_lib = $(top_builddir)/src/c64/libvsid.a
 xcbm2_lib = $(top_builddir)/src/cbm2/libcbm2.a
 cbm2cart_lib = $(top_builddir)/src/cbm2/cart/libcbm2cart.a
 xcbm5x0_lib = $(top_builddir)/src/cbm2/libcbm5x0.a
+if ENABLE_BAP_FRAMES
+bap_frames_lib = $(top_builddir)/src/lib/bap-frames/libtrace/src/libtrace.a
+endif
 
 common_libs = @ARCH_LIBS@ @LIBOBJS@ @READLINE@
 resid_libs = @RESID_LIBS@
@@ -765,6 +768,12 @@ x64sc_SOURCES = $(base_sources) $(midi_sources)
 x64sc_LDADD = $(x64sc_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIBS@ $(X64SC_RES)
 x64sc_DEPENDENCIES = $(x64sc_libs)
 x64sc_LDFLAGS = @x64_LDFLAGS@
+
+if ENABLE_BAP_FRAMES
+x64sc_libs += $(bap_frames_lib)
+x64sc_SOURCES += trace.cpp
+x64sc_LDFLAGS += @PROTOBUF_LIBS@
+endif
 
 .PHONY: x64sc-all x64sc-program
 x64sc-all:
@@ -1453,5 +1462,14 @@ $(video_lib):
 $(vsid_lib):
 	@echo "making libvsid.a in c64"
 	@(cd c64 && $(MAKE) psiddrv.h libvsid.a)
+
+if ENABLE_BAP_FRAMES
+$(bap_frames_lib):
+	@echo "making libtrace.a in lib/bap-frames/libtrace/src"
+	@(cd lib/bap-frames/libtrace/src && $(MAKE) libtrace.a)
+
+.PHONY: bap-frames
+bap-frames: ${bap_frames_lib}
+endif
 
 clean: clean-recursive
