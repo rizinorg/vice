@@ -968,6 +968,12 @@ xvic_LDADD = $(xvic_libs) $(emu_extlibs) $(mascuerade_lib) @TFE_LIBS@ @NETPLAY_L
 xvic_DEPENDENCIES = $(xvic_libs)
 xvic_LDFLAGS = @xvic_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+xvic_libs += $(bap_frames_lib)
+xvic_SOURCES += trace.cpp
+xvic_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: xvic-all xvic-program
 xvic-all:
 	@for i in $(xvic_libs); do rm -fr "$$i"; done

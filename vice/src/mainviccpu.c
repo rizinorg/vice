@@ -45,6 +45,11 @@
 #include "traps.h"
 #include "types.h"
 
+#ifdef FEATURE_BAP_FRAMES
+#include "trace.h"
+#include <string.h>
+#endif
+
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 1
 #endif
