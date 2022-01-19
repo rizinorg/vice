@@ -1456,3 +1456,5 @@ vice/doc/vim/ftdetect/Makefile
 vice/doc/vim/ftdetect/Makefile.in
 vice/doc/vim/syntax/Makefile
 vice/doc/vim/syntax/Makefile.in
+
+*.frames
