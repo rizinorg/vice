@@ -53,8 +53,10 @@
 #include "traps.h"
 #include "types.h"
 
-// TODO: conditional
+#ifdef FEATURE_BAP_FRAMES
 #include "trace.h"
+#include <string.h>
+#endif
 
 #ifndef EXIT_FAILURE
 #define EXIT_FAILURE 1
@@ -334,6 +336,113 @@ static uint8_t memmap_mem_read_dummy(unsigned int addr)
 #define STACK_PEEK()  memmap_mem_read_dummy(0x100 + reg_sp)
 
 #endif /* FEATURE_CPUMEMHISTORY */
+
+#ifdef FEATURE_BAP_FRAMES
+// very similar to FEATURE_CPUMEMHISTORY, just doing different tracing
+
+inline static void memtrace_access(unsigned int addr, uint8_t val, int write, int dummy)
+{
+	if (dummy) {
+		return;
+	}
+	TraceOperands *to = write ? &build_frame.post : &build_frame.pre;
+	if (to->mems_count >= TRACE_MEM_MAX) {
+		fprintf(stderr, "trace mem overflow\n");
+		return;
+	}
+	TraceMem *m = &to->mems[to->mems_count++];
+	m->addr = (uint16_t)addr;
+	m->val = val;
+}
+
+static void memtrace_mem_store(unsigned int addr, unsigned int value)
+{
+    memtrace_access(addr, (uint8_t)value, 1, 0);
+    (*_mem_write_tab_ptr[(addr) >> 8])((uint16_t)(addr), (uint8_t)(value));
+}
+
+static void memtrace_mem_store_dummy(unsigned int addr, unsigned int value)
+{
+    memtrace_access(addr, (uint8_t)value, 1, 1);
+    (*_mem_write_tab_ptr_dummy[(addr) >> 8])((uint16_t)(addr), (uint8_t)(value));
+}
+
+/* read byte, check BA and mark as read */
+static uint8_t memtrace_mem_read(unsigned int addr)
+{
+    check_ba();
+    uint8_t value = (*_mem_read_tab_ptr[(addr) >> 8])((uint16_t)(addr));
+    memtrace_access(addr, value, 0, 0);
+	return value;
+}
+
+static uint8_t memtrace_mem_read_dummy(unsigned int addr)
+{
+    check_ba();
+    uint8_t value = (*(_mem_read_tab_ptr_dummy[(addr) >> 8]))((uint16_t)(addr));
+    memtrace_access(addr, value, 0, 0);
+	return value;
+}
+
+#ifndef STORE
+#define STORE(addr, value) \
+    memtrace_mem_store(addr, value)
+#endif
+
+#ifndef STORE_DUMMY
+#define STORE_DUMMY(addr, value) \
+    memtrace_mem_store_dummy(addr, value)
+#endif
+
+#ifndef LOAD
+#define LOAD(addr) \
+    memtrace_mem_read(addr)
+#endif
+
+#ifndef LOAD_DUMMY
+#define LOAD_DUMMY(addr) \
+    memtrace_mem_read_dummy(addr)
+#endif
+
+#ifndef LOAD_CHECK_BA_LOW
+#define LOAD_CHECK_BA_LOW(addr) \
+    check_ba_low = 1;           \
+    memtrace_mem_read(addr);\
+    check_ba_low = 0
+#endif
+
+#ifndef LOAD_CHECK_BA_LOW_DUMMY
+#define LOAD_CHECK_BA_LOW_DUMMY(addr) \
+    check_ba_low = 1;           \
+    memtrace_mem_read_dummy(addr);\
+    check_ba_low = 0
+#endif
+
+#ifndef STORE_ZERO
+#define STORE_ZERO(addr, value) \
+    memtrace_mem_store((addr) & 0xff, value)
+#endif
+
+#ifndef STORE_ZERO_DUMMY
+#define STORE_ZERO_DUMMY(addr, value) \
+    memtrace_mem_store_dummy((addr) & 0xff, value)
+#endif
+
+#ifndef LOAD_ZERO
+#define LOAD_ZERO(addr) \
+    memtrace_mem_read((addr) & 0xff)
+#endif
+
+#ifndef LOAD_ZERO_DUMMY
+#define LOAD_ZERO_DUMMY(addr) \
+    memtrace_mem_read_dummy((addr) & 0xff)
+#endif
+
+#define PUSH(val) memtrace_mem_store((0x100 + (reg_sp--)), (uint8_t)(val))
+#define PULL()    memtrace_mem_read(0x100 + (++reg_sp))
+#define STACK_PEEK()  memtrace_mem_read_dummy(0x100 + reg_sp)
+
+#endif /* FEATURE_BAP_FRAMES */
 
 inline static uint8_t mem_read_check_ba(unsigned int addr)
 {
@@ -643,8 +752,9 @@ void maincpu_resync_limits(void)
 
 void maincpu_mainloop(void)
 {
-	// TODO: conditional
+#ifdef FEATURE_BAP_FRAMES
 	trace_open();
+#endif
 
     /* Notice that using a struct for these would make it a lot slower (at
        least, on gcc 2.7.2.x).  */

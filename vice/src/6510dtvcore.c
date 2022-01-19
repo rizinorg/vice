@@ -1705,6 +1705,23 @@ static const uint8_t fetch_tab[] = {
         memmap_state |= (MEMMAP_STATE_INSTR | MEMMAP_STATE_OPCODE);
 #endif
 
+#ifdef FEATURE_BAP_FRAMES
+		memset(&build_frame, 0, sizeof(build_frame));
+#define TRACE_DUMP_REGS(dst) \
+		do { \
+			dst.a = reg_a; \
+			dst.x = reg_x; \
+			dst.y = reg_y; \
+			dst.sp = reg_sp; \
+			dst.pc = (uint16_t)reg_pc; \
+		} while (0);
+		TRACE_DUMP_REGS(build_frame.pre.regs);
+		build_frame.op[0] = p0;
+		build_frame.op[1] = p1;
+		build_frame.op[2] = p2;
+		build_frame.op_size = 3; // TODO: real op might be smaller
+#endif
+
         SET_LAST_ADDR(reg_pc);
 
         FETCH_OPCODE(opcode);
@@ -2686,5 +2703,10 @@ trap_skipped:
                 ISB(3, GET_ABS_X_RMW, SET_ABS_X_RMW);
                 break;
         }
+
+#ifdef FEATURE_BAP_FRAMES
+		TRACE_DUMP_REGS(build_frame.post.regs);
+		trace_push(&build_frame);
+#endif
     }
 }
