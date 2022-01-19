@@ -100,6 +100,9 @@ static void push_regs(operand_value_list *out, TraceRegs *in, bool r, bool w, Tr
 	if (!diff || in->pc != diff->pc) {
 		push_reg(out, "pc", in->pc, 16, r, w);
 	}
+	if (!diff || in->sr != diff->sr) {
+		push_reg(out, "sr", in->pc, 8, r, w);
+	}
 }
 
 static void push_mems(operand_value_list *out, TraceMem *mems, size_t count, bool r, bool w) {

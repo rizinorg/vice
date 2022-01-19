@@ -1714,6 +1714,7 @@ static const uint8_t fetch_tab[] = {
 			dst.y = reg_y; \
 			dst.sp = reg_sp; \
 			dst.pc = (uint16_t)reg_pc; \
+			dst.sr = LOCAL_STATUS(); \
 		} while (0);
 		TRACE_DUMP_REGS(build_frame.pre.regs);
 		build_frame.op[0] = p0;

@@ -12,6 +12,7 @@ extern "C" {
 typedef struct trace_regs_t {
 	uint8_t a, x, y, sp;
 	uint16_t pc;
+	uint8_t sr;
 } TraceRegs;
 
 typedef struct trace_mem_t {
