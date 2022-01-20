@@ -1716,11 +1716,9 @@ static const uint8_t fetch_tab[] = {
 			dst.pc = (uint16_t)reg_pc; \
 			dst.sr = LOCAL_STATUS(); \
 		} while (0);
-		TRACE_DUMP_REGS(build_frame.pre.regs);
-		build_frame.op[0] = p0;
-		build_frame.op[1] = p1;
-		build_frame.op[2] = p2;
-		build_frame.op_size = 3; // TODO: real op might be smaller
+		if (trace_is_open()) {
+			TRACE_DUMP_REGS(build_frame.pre.regs);
+		}
 #endif
 
         SET_LAST_ADDR(reg_pc);
@@ -1733,6 +1731,15 @@ static const uint8_t fetch_tab[] = {
            The fixing is now handled in JSR(). */
         monitor_cpuhistory_store(maincpu_clk, reg_pc, p0, p1, p2 >> 8, reg_a_read, reg_x, reg_y, reg_sp, LOCAL_STATUS(), 0);
         memmap_state &= ~(MEMMAP_STATE_INSTR | MEMMAP_STATE_OPCODE);
+#endif
+
+#ifdef FEATURE_BAP_FRAMES
+		if (trace_is_open()) {
+			build_frame.op[0] = p0;
+			build_frame.op[1] = p1;
+			build_frame.op[2] = p2;
+			build_frame.op_size = 3; // TODO: real op might be smaller
+		}
 #endif
 
 #ifdef DEBUG
@@ -2706,8 +2713,10 @@ trap_skipped:
         }
 
 #ifdef FEATURE_BAP_FRAMES
-		TRACE_DUMP_REGS(build_frame.post.regs);
-		trace_push(&build_frame);
+		if (trace_is_open()) {
+			TRACE_DUMP_REGS(build_frame.post.regs);
+			trace_push(&build_frame);
+		}
 #endif
     }
 }

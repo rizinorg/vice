@@ -811,6 +811,24 @@ static const mon_cmds_t mon_cmd_array[] = {
       NO_FILENAME_ARG
     },
 
+    { "", "",
+      "",
+      "BAP-frames commands:",
+      NO_FILENAME_ARG
+    },
+
+    { "bapframeso", "bapo",
+      "\"<filename>\"",
+      "Open bap-frames trace file.\n",
+      FILENAME_ARG
+    },
+
+    { "bapframesc", "bapc",
+      "",
+      "Close bap-frames trace file.\n",
+      FILENAME_ARG
+    },
+
     { NULL, NULL, NULL, NULL, 0 }
 };
 

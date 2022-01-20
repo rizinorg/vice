@@ -77,6 +77,7 @@ extern char *alloca();
 #include "mon_drive.h"
 #include "mon_file.h"
 #include "mon_memmap.h"
+#include "mon_trace.h"
 #include "mon_memory.h"
 #include "mon_register.h"
 #include "mon_util.h"
@@ -168,6 +169,7 @@ extern int cur_len, last_len;
 %token CMD_RESOURCE_GET CMD_RESOURCE_SET CMD_LOAD_RESOURCES CMD_SAVE_RESOURCES
 %token CMD_ATTACH CMD_DETACH CMD_MON_RESET CMD_TAPECTRL CMD_CARTFREEZE CMD_UPDB CMD_JPDB
 %token CMD_CPUHISTORY CMD_MEMMAPZAP CMD_MEMMAPSHOW CMD_MEMMAPSAVE
+%token CMD_BAP_FRAMES_OPEN CMD_BAP_FRAMES_CLOSE
 %token CMD_COMMENT CMD_LIST CMD_STOPWATCH RESET
 %token CMD_EXPORT CMD_AUTOSTART CMD_AUTOLOAD CMD_MAINCPU_TRACE
 %token CMD_WARP
@@ -274,6 +276,10 @@ machine_state_rules: CMD_BANK end_cmd
                      { mon_cpuhistory($3, $5, $7, $9, $11,   0); }
                    | CMD_CPUHISTORY opt_sep d_number opt_sep memspace opt_sep memspace opt_sep memspace opt_sep memspace opt_sep memspace end_cmd
                      { mon_cpuhistory($3, $5, $7, $9, $11, $13); }
+                   | CMD_BAP_FRAMES_OPEN filename end_cmd
+                     { mon_bap_frames_open($2); }
+                   | CMD_BAP_FRAMES_CLOSE end_cmd
+                     { mon_bap_frames_close(); }
                    | CMD_RETURN end_cmd
                      { mon_instruction_return(); }
                    | CMD_DUMP filename end_cmd

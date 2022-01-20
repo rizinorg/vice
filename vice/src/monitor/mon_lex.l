@@ -182,6 +182,8 @@ HDIGIT  [0-9a-f]
         condition|cond  { BEGIN(INITIAL);       return CMD_CONDITION; }
         cpu             { BEGIN(CTYPE);         return CMD_CPU; }
         cpuhistory|chis { BEGIN(INITIAL);       return CMD_CPUHISTORY; }
+        bapframeso|bapo { BEGIN(FNAME);         return CMD_BAP_FRAMES_OPEN; }
+        bapframesc|bapc { BEGIN(INITIAL);       return CMD_BAP_FRAMES_CLOSE; }
         dir|ls          { BEGIN(ROL);           return CMD_DIR; }
         disass|d        { BEGIN(INITIAL);       return CMD_DISASSEMBLE; }
         delete|del      { BEGIN(INITIAL);       return CMD_DELETE; }

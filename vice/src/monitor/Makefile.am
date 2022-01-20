@@ -54,6 +54,8 @@ libmonitor_a_SOURCES = \
 	mon_file.h \
 	mon_memmap.c \
 	mon_memmap.h \
+	mon_trace.c \
+	mon_trace.h \
 	mon_memory.c \
 	mon_memory.h \
 	mon_register6502.c \

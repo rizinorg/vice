@@ -35,8 +35,9 @@ typedef struct trace_frame_t {
 	TraceOperands post;
 } TraceFrame;
 
-void trace_open(void);
+int trace_open(const char *filename);
 void trace_close(void);
+int trace_is_open(void);
 void trace_push(TraceFrame *tf);
 
 extern TraceFrame build_frame;

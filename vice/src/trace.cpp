@@ -18,13 +18,12 @@ static void close_writer(SerializedTrace::TraceContainerWriter *w) {
 
 std::unique_ptr<SerializedTrace::TraceContainerWriter, decltype(&close_writer)> writer(nullptr, close_writer);
 
-extern "C" void trace_open(void) {
+extern "C" int trace_open(const char *filename) {
 	eprintf("opening...\n");
 	if (writer) {
 		eprintf("already open.\n");
+		return 0;
 	}
-
-	std::string filename = "trace.frames"; // TODO
 
 	tracer *trac = new tracer();
 	trac->set_name("x64sc");
@@ -52,12 +51,18 @@ extern "C" void trace_open(void) {
 		writer.reset(new SerializedTrace::TraceContainerWriter(filename, meta, frame_arch_6502, 0));
 	} catch (std::exception e) {
 		eprintf("open failed: %s\n", e.what());
+		return 0;
 	}
 	eprintf("opened\n");
+	return 1;
 }
 
 extern "C" void trace_close(void) {
 	writer.reset(nullptr);
+}
+
+extern "C" int trace_is_open(void) {
+	return !!writer;
 }
 
 static void push_reg(operand_value_list *out, const char *name, uint16_t v, size_t bits, bool r, bool w) {

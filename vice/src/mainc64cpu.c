@@ -753,7 +753,7 @@ void maincpu_resync_limits(void)
 void maincpu_mainloop(void)
 {
 #ifdef FEATURE_BAP_FRAMES
-	trace_open();
+	// TODO: cmdline arg for trace_open();
 #endif
 
     /* Notice that using a struct for these would make it a lot slower (at
