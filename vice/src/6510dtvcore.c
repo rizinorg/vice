@@ -1737,7 +1737,7 @@ static const uint8_t fetch_tab[] = {
 		if (trace_is_open()) {
 			build_frame.op[0] = p0;
 			build_frame.op[1] = p1;
-			build_frame.op[2] = p2;
+			build_frame.op[2] = p2 >> 8;
 			build_frame.op_size = 3; // TODO: real op might be smaller
 		}
 #endif
