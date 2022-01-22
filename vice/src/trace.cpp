@@ -102,9 +102,7 @@ static void push_regs(operand_value_list *out, TraceRegs *in, bool r, bool w, Tr
 	if (!diff || in->sp != diff->sp) {
 		push_reg(out, "sp", in->sp, 8, r, w);
 	}
-	if (!diff || in->pc != diff->pc) {
-		push_reg(out, "pc", in->pc, 16, r, w);
-	}
+	push_reg(out, "pc", in->pc, 16, r, w);
 	if (!diff || in->sr != diff->sr) {
 		push_reg(out, "sr", in->sr, 8, r, w);
 	}
