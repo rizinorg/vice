@@ -1,3 +1,3 @@
 [submodule "vice/src/lib/bap-frames"]
 	path = vice/src/lib/bap-frames
-	url = https://github.com/thestr4ng3r/bap-frames
+	url = https://github.com/BinaryAnalysisPlatform/bap-frames.git

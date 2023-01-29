@@ -361,6 +361,10 @@ base_sources = \
 	zfile.c \
 	zipcode.c
 
+if ENABLE_BAP_FRAMES
+base_sources += trace.cpp
+endif
+
 ps2mouse_sources = \
 	ps2mouse.c
 
@@ -673,6 +677,11 @@ vsid_LDADD = $(vsid_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIB
 vsid_DEPENDENCIES = $(vsid_libs)
 vsid_LDFLAGS = @vsid_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+vsid_libs += $(bap_frames_lib)
+vsid_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: vsid-all vsid-program
 vsid-all:
 	@for i in $(vsid_libs); do rm -fr "$$i"; done
@@ -771,7 +780,6 @@ x64sc_LDFLAGS = @x64_LDFLAGS@
 
 if ENABLE_BAP_FRAMES
 x64sc_libs += $(bap_frames_lib)
-x64sc_SOURCES += trace.cpp
 x64sc_LDFLAGS += @PROTOBUF_LIBS@
 endif
 
@@ -823,6 +831,11 @@ x64dtv_LDADD = $(x64dtv_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE
 x64dtv_DEPENDENCIES = $(x64dtv_libs)
 x64dtv_LDFLAGS = @x64_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+x64dtv_libs += $(bap_frames_lib)
+x64dtv_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: x64dtv-all x64dtv-program
 x64dtv-all:
 	@for i in $(x64dtv_libs); do rm -fr "$$i"; done
@@ -870,6 +883,11 @@ xscpu64_SOURCES = $(base_sources) $(midi_sources)
 xscpu64_LDADD = $(xscpu64_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIBS@ $(XSCPU64_RES)
 xscpu64_DEPENDENCIES = $(xscpu64_libs)
 xscpu64_LDFLAGS = @xscpu64_LDFLAGS@
+
+if ENABLE_BAP_FRAMES
+xscpu64_libs += $(bap_frames_lib)
+xscpu64_LDFLAGS += @PROTOBUF_LIBS@
+endif
 
 .PHONY: xscpu64-all xscpu64-program
 xscpu64-all:
@@ -922,6 +940,11 @@ x128_LDADD = $(x128_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIB
 x128_DEPENDENCIES = $(x128_libs)
 x128_LDFLAGS = @x128_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+x128_libs += $(bap_frames_lib)
+x128_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: x128-all x128-program
 x128-all:
 	@for i in $(x128_libs); do rm -fr "$$i"; done
@@ -970,7 +993,6 @@ xvic_LDFLAGS = @xvic_LDFLAGS@
 
 if ENABLE_BAP_FRAMES
 xvic_libs += $(bap_frames_lib)
-xvic_SOURCES += trace.cpp
 xvic_LDFLAGS += @PROTOBUF_LIBS@
 endif
 
@@ -1018,6 +1040,11 @@ xpet_SOURCES = $(base_sources)
 xpet_LDADD = $(xpet_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIBS@ $(XPET_RES)
 xpet_DEPENDENCIES = $(xpet_libs) 
 xpet_LDFLAGS = @xpet_LDFLAGS@
+
+if ENABLE_BAP_FRAMES
+xpet_libs += $(bap_frames_lib)
+xpet_LDFLAGS += @PROTOBUF_LIBS@
+endif
 
 .PHONY: xpet-all xpet-program
 xpet-all:
@@ -1067,6 +1094,11 @@ xplus4_LDADD = $(xplus4_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE
 xplus4_DEPENDENCIES = $(xplus4_libs)
 xplus4_LDFLAGS = @xplus4_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+xplus4_libs += $(bap_frames_lib)
+xplus4_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: xplus4-all xplus4-program
 xplus4-all:
 	@for i in $(xplus4_libs); do rm -fr "$$i"; done
@@ -1113,6 +1145,11 @@ xcbm2_LDADD = $(xcbm2_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_L
 xcbm2_DEPENDENCIES = $(xcbm2_libs)
 xcbm2_LDFLAGS = @xcbm2_LDFLAGS@
 
+if ENABLE_BAP_FRAMES
+xcbm2_libs += $(bap_frames_lib)
+xcbm2_LDFLAGS += @PROTOBUF_LIBS@
+endif
+
 .PHONY: xcbm2-all xcbm2-program
 xcbm2-all:
 	@for i in $(xcbm2_libs); do rm -fr "$$i"; done
@@ -1158,6 +1195,11 @@ xcbm5x0_SOURCES = $(base_sources)
 xcbm5x0_LDADD = $(xcbm5x0_libs) $(emu_extlibs) @TFE_LIBS@ @NETPLAY_LIBS@ @READLINE_LIBS@ $(XCBM5x0_RES)
 xcbm5x0_DEPENDENCIES = $(xcbm5x0_libs) 
 xcbm5x0_LDFLAGS = @xcbm2_LDFLAGS@
+
+if ENABLE_BAP_FRAMES
+xcbm5x0_libs += $(bap_frames_lib)
+xcbm5x0_LDFLAGS += @PROTOBUF_LIBS@
+endif
 
 .PHONY: xcbm5x0-all xcbm5x0-program
 xcbm5x0-all:

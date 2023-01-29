@@ -28,6 +28,7 @@ git submodule update --init
 Then:
 ```
 cd vice
+./autogen.sh
 ./configure --enable-bap-frames --prefix=...
 make
 make install # optional
